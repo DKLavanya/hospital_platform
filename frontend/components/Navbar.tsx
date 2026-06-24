@@ -3,11 +3,12 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { Activity, User, LogOut, ShieldAlert, Heart, Calendar } from "lucide-react";
+import { Activity, User, LogOut, Menu, X } from "lucide-react";
 import { apiRequest } from "../utils/api";
 
 export default function Navbar() {
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -53,7 +54,8 @@ export default function Navbar() {
           <span className="logo-text">Tele<span className="gradient-txt">Med</span></span>
         </Link>
 
-        <nav className="nav-links">
+        {/* Desktop Navigation */}
+        <nav className="nav-links desktop-only">
           <Link href="/" className={`nav-link ${pathname === "/" ? "active" : ""}`}>
             Overview
           </Link>
@@ -68,12 +70,13 @@ export default function Navbar() {
           </Link>
         </nav>
 
-        <div className="auth-section">
+        {/* Desktop Auth Section */}
+        <div className="auth-section desktop-only">
           {currentUser ? (
             <div className="user-profile-menu">
               <div className="user-avatar-info">
                 <div className="avatar-placeholder">
-                  {currentUser.name[0].toUpperCase()}
+                  {(currentUser.name?.[0] || "U").toUpperCase()}
                 </div>
                 <div className="avatar-details">
                   <span className="avatar-name">{currentUser.name}</span>
@@ -93,7 +96,79 @@ export default function Navbar() {
             </Link>
           )}
         </div>
+
+        {/* Mobile Hamburger Button */}
+        <button 
+          className="mobile-menu-toggle" 
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle Menu"
+        >
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
       </div>
+
+      {/* Mobile Drawer Menu */}
+      {mobileMenuOpen && (
+        <div className="mobile-drawer animate-slide-up">
+          <nav className="mobile-nav-links">
+            <Link 
+              href="/" 
+              onClick={() => setMobileMenuOpen(false)}
+              className={`mobile-nav-link ${pathname === "/" ? "active" : ""}`}
+            >
+              Overview
+            </Link>
+            <Link 
+              href="/symptoms" 
+              onClick={() => setMobileMenuOpen(false)}
+              className={`mobile-nav-link ${pathname === "/symptoms" ? "active" : ""}`}
+            >
+              AI Symptom Checker
+            </Link>
+            <Link 
+              href="/patient" 
+              onClick={() => setMobileMenuOpen(false)}
+              className={`mobile-nav-link ${pathname.startsWith("/patient") ? "active" : ""}`}
+            >
+              Patient Portal
+            </Link>
+            <Link 
+              href="/doctor" 
+              onClick={() => setMobileMenuOpen(false)}
+              className={`mobile-nav-link ${pathname.startsWith("/doctor") ? "active" : ""}`}
+            >
+              Doctor Portal
+            </Link>
+            
+            <div className="mobile-auth-divider" />
+            
+            <div className="mobile-auth-wrapper">
+              {currentUser ? (
+                <div className="mobile-profile-details">
+                  <div className="mobile-user-row">
+                    <div className="avatar-placeholder">
+                      {(currentUser.name?.[0] || "U").toUpperCase()}
+                    </div>
+                    <div className="mobile-user-meta">
+                      <span className="mobile-username">{currentUser.name}</span>
+                      <span className="mobile-role">
+                        {currentUser.role === "doctor" ? `${currentUser.specialization || "Physician"}` : "Patient"}
+                      </span>
+                    </div>
+                  </div>
+                  <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="btn btn-secondary mobile-logout-btn">
+                    <LogOut size={16} /> Sign Out
+                  </button>
+                </div>
+              ) : (
+                <Link href="/auth" onClick={() => setMobileMenuOpen(false)} className="btn btn-primary mobile-login-btn">
+                  <User size={16} /> Sign In
+                </Link>
+              )}
+            </div>
+          </nav>
+        </div>
+      )}
 
       <style jsx>{`
         .navbar-container {
@@ -101,8 +176,8 @@ export default function Navbar() {
           top: 0;
           z-index: 100;
           background: rgba(11, 15, 25, 0.85);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
           border-bottom: 1px solid var(--border-color);
           height: 72px;
           display: flex;
@@ -150,28 +225,55 @@ export default function Navbar() {
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
         }
+        
+        /* Desktop Navigation & Links styling */
         .nav-links {
           display: flex;
           align-items: center;
-          gap: 28px;
+          gap: 32px;
         }
         .nav-link {
           color: var(--text-muted);
           text-decoration: none;
+          font-family: var(--font-heading);
           font-size: 0.95rem;
-          font-weight: 500;
+          font-weight: 600;
           transition: var(--transition-fast);
-          padding: 6px 12px;
-          border-radius: var(--radius-sm);
+          padding: 8px 4px;
+          position: relative;
+          display: flex;
+          align-items: center;
+        }
+        .nav-link::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          background: linear-gradient(90deg, var(--primary), var(--secondary));
+          transform: scaleX(0);
+          transform-origin: right;
+          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          border-radius: var(--radius-full);
         }
         .nav-link:hover {
           color: var(--text-main);
-          background: rgba(255, 255, 255, 0.03);
+        }
+        .nav-link:hover::after {
+          transform: scaleX(1);
+          transform-origin: left;
         }
         .nav-link.active {
-          color: var(--secondary);
-          background: var(--secondary-glow);
+          color: var(--text-main);
+          font-weight: 700;
         }
+        .nav-link.active::after {
+          transform: scaleX(1);
+          background: var(--secondary);
+          box-shadow: 0 0 8px var(--secondary);
+        }
+
         .auth-section {
           display: flex;
           align-items: center;
@@ -233,6 +335,104 @@ export default function Navbar() {
         }
         .btn-logout:hover {
           color: var(--danger);
+        }
+
+        /* Mobile Layout & Hamburger styles */
+        .desktop-only {
+          display: flex;
+        }
+        .mobile-menu-toggle {
+          display: none;
+          background: transparent;
+          border: none;
+          color: var(--text-main);
+          cursor: pointer;
+          padding: 6px;
+          align-items: center;
+          justify-content: center;
+          transition: var(--transition-fast);
+        }
+        .mobile-menu-toggle:hover {
+          color: var(--secondary);
+        }
+
+        .mobile-drawer {
+          position: absolute;
+          top: 72px;
+          left: 0;
+          width: 100%;
+          background: rgba(11, 15, 25, 0.95);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border-bottom: 1px solid var(--border-color);
+          padding: 24px;
+          z-index: 99;
+        }
+        .mobile-nav-links {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+        .mobile-nav-link {
+          color: var(--text-muted);
+          text-decoration: none;
+          font-family: var(--font-heading);
+          font-size: 1.05rem;
+          font-weight: 600;
+          padding: 10px 14px;
+          border-radius: var(--radius-md);
+          transition: var(--transition-fast);
+          border-left: 3px solid transparent;
+        }
+        .mobile-nav-link:hover, .mobile-nav-link.active {
+          color: var(--text-main);
+          background: rgba(255, 255, 255, 0.04);
+          border-left: 3px solid var(--secondary);
+          padding-left: 20px;
+        }
+        
+        .mobile-auth-divider {
+          height: 1px;
+          background: var(--border-color);
+          margin: 8px 0;
+        }
+        .mobile-auth-wrapper {
+          padding: 8px 12px;
+        }
+        .mobile-profile-details {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+        .mobile-user-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .mobile-user-meta {
+          display: flex;
+          flex-direction: column;
+        }
+        .mobile-username {
+          font-size: 0.95rem;
+          font-weight: 600;
+          color: var(--text-main);
+        }
+        .mobile-role {
+          font-size: 0.8rem;
+          color: var(--text-muted);
+        }
+        .mobile-logout-btn, .mobile-login-btn {
+          width: 100%;
+        }
+
+        @media (max-width: 820px) {
+          .desktop-only {
+            display: none !important;
+          }
+          .mobile-menu-toggle {
+            display: flex;
+          }
         }
       `}</style>
     </header>
