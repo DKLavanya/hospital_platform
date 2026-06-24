@@ -253,9 +253,9 @@ export default function Navbar() {
         }
         .nav-link.active {
           color: var(--secondary);
-          background: var(--secondary-glow);
-          border-color: rgba(14, 165, 233, 0.15);
           font-weight: 700;
+          background: transparent;
+          border-color: transparent;
         }
 
         .auth-section {
