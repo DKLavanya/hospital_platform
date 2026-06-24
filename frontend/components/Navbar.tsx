@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { Activity, User, LogOut, Menu, X } from "lucide-react";
+import { Activity, User, LogOut, Menu, X, LayoutDashboard, Brain, Heart, Stethoscope } from "lucide-react";
 import { apiRequest } from "../utils/api";
 
 export default function Navbar() {
@@ -54,18 +54,22 @@ export default function Navbar() {
           <span className="logo-text">Tele<span className="gradient-txt">Med</span></span>
         </Link>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Button Navigation */}
         <nav className="nav-links desktop-only">
           <Link href="/" className={`nav-link ${pathname === "/" ? "active" : ""}`}>
+            <LayoutDashboard size={15} />
             Overview
           </Link>
           <Link href="/symptoms" className={`nav-link ${pathname === "/symptoms" ? "active" : ""}`}>
+            <Brain size={15} />
             AI Symptom Checker
           </Link>
           <Link href="/patient" className={`nav-link ${pathname.startsWith("/patient") ? "active" : ""}`}>
+            <Heart size={15} />
             Patient Portal
           </Link>
           <Link href="/doctor" className={`nav-link ${pathname.startsWith("/doctor") ? "active" : ""}`}>
+            <Stethoscope size={15} />
             Doctor Portal
           </Link>
         </nav>
@@ -116,6 +120,7 @@ export default function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
               className={`mobile-nav-link ${pathname === "/" ? "active" : ""}`}
             >
+              <LayoutDashboard size={16} />
               Overview
             </Link>
             <Link 
@@ -123,6 +128,7 @@ export default function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
               className={`mobile-nav-link ${pathname === "/symptoms" ? "active" : ""}`}
             >
+              <Brain size={16} />
               AI Symptom Checker
             </Link>
             <Link 
@@ -130,6 +136,7 @@ export default function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
               className={`mobile-nav-link ${pathname.startsWith("/patient") ? "active" : ""}`}
             >
+              <Heart size={16} />
               Patient Portal
             </Link>
             <Link 
@@ -137,6 +144,7 @@ export default function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
               className={`mobile-nav-link ${pathname.startsWith("/doctor") ? "active" : ""}`}
             >
+              <Stethoscope size={16} />
               Doctor Portal
             </Link>
             
@@ -226,52 +234,40 @@ export default function Navbar() {
           -webkit-text-fill-color: transparent;
         }
         
-        /* Desktop Navigation & Links styling */
+        /* Desktop Button Navigation styling */
         .nav-links {
           display: flex;
           align-items: center;
-          gap: 32px;
+          gap: 6px;
+          background: rgba(255, 255, 255, 0.02);
+          border: 1px solid var(--border-color);
+          padding: 6px;
+          border-radius: var(--radius-full);
+          backdrop-filter: blur(10px);
         }
         .nav-link {
           color: var(--text-muted);
           text-decoration: none;
           font-family: var(--font-heading);
-          font-size: 0.95rem;
+          font-size: 0.88rem;
           font-weight: 600;
           transition: var(--transition-fast);
-          padding: 8px 4px;
-          position: relative;
+          padding: 8px 16px;
+          border-radius: var(--radius-full);
           display: flex;
           align-items: center;
-        }
-        .nav-link::after {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: 2px;
-          background: linear-gradient(90deg, var(--primary), var(--secondary));
-          transform: scaleX(0);
-          transform-origin: right;
-          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          border-radius: var(--radius-full);
+          gap: 8px;
+          border: 1px solid transparent;
         }
         .nav-link:hover {
           color: var(--text-main);
-        }
-        .nav-link:hover::after {
-          transform: scaleX(1);
-          transform-origin: left;
+          background: rgba(255, 255, 255, 0.04);
         }
         .nav-link.active {
-          color: var(--text-main);
-          font-weight: 700;
-        }
-        .nav-link.active::after {
-          transform: scaleX(1);
-          background: var(--secondary);
-          box-shadow: 0 0 8px var(--secondary);
+          color: var(--secondary);
+          background: var(--secondary-glow);
+          border-color: rgba(14, 165, 233, 0.2);
+          box-shadow: 0 2px 10px rgba(14, 165, 233, 0.05);
         }
 
         .auth-section {
@@ -379,15 +375,18 @@ export default function Navbar() {
           font-family: var(--font-heading);
           font-size: 1.05rem;
           font-weight: 600;
-          padding: 10px 14px;
+          padding: 12px 16px;
           border-radius: var(--radius-md);
           transition: var(--transition-fast);
-          border-left: 3px solid transparent;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          border: 1px solid transparent;
         }
         .mobile-nav-link:hover, .mobile-nav-link.active {
-          color: var(--text-main);
-          background: rgba(255, 255, 255, 0.04);
-          border-left: 3px solid var(--secondary);
+          color: var(--secondary);
+          background: var(--secondary-glow);
+          border: 1px solid rgba(14, 165, 233, 0.15);
           padding-left: 20px;
         }
         
@@ -426,7 +425,7 @@ export default function Navbar() {
           width: 100%;
         }
 
-        @media (max-width: 820px) {
+        @media (max-width: 900px) {
           .desktop-only {
             display: none !important;
           }
