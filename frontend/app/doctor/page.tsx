@@ -651,7 +651,7 @@ export default function DoctorDashboard() {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">Special instructions / pharmacy notes</label>
+                    <label className="form-label">Special instructions / pharmacy notes (Optional)</label>
                     <textarea 
                       rows={3} 
                       value={prescriptionNotes} 
